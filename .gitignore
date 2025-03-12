@@ -1,0 +1,28 @@
+# Ignore frontend dependencies and build
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.js
+
+# Ignore frontend test and build files
+frontend/coverage/
+frontend/build/
+
+# Ignore production files
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Ignore frontend logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Ignore backend virtual environment
+backend/venv/
+
+# Ignore other misc files
+.DS_Store
+backend/venv/lib64
+backend/venv/bin/python3
+backend/venv/bin/python
