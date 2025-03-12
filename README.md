@@ -11,5 +11,12 @@ backend:
 
 frontend:
     npm install
+
+
+
+
+
+
+
 # unihack2025
 # unihack2025
