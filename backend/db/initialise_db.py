@@ -21,7 +21,7 @@ def insert_sample_data():
     with Session() as session:
 
         ir = [
-            Infared(count=0, date_recorded=datetime.strptime('01/01/2001', '%d/%m/%Y')),
+            Infared(latitude=-33.7066655, longitude=151.1611542, count=0, date_recorded=datetime.strptime('14/03/2025 12:00:00', '%d/%m/%Y %H:%M:%S'))
         ]
         
 
