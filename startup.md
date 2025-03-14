@@ -11,3 +11,5 @@ backend:
 
 frontend:
     npm install
+    npm install @emotion/react @emotion/styled @mui/styled-engine
+    

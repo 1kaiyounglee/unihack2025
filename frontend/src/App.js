@@ -1,19 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from 'react';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Box, CircularProgress, Backdrop } from '@mui/material';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { deepPurple } from '@mui/material/colors';
+
+// Import your page component
+import HomePage from './Pages/HomePage';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: deepPurple,
+  },
+});
 
 function App() {
-  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Fetch data from the backend API
-    fetch("http://localhost:5000/api/hello")
-      .then((response) => response.json())
-      .then((data) => setMessage(data.message));
-  }, []);
+  const handleSetLoading = (isLoading) => {
+    setLoading(isLoading);
+  };
 
   return (
-    <div className="App">
-      <h1>{message}</h1>
-    </div>
+    <ThemeProvider theme={darkTheme}>
+      <Router>
+        <Box sx={{ flexGrow: 1 }}>
+          {/* Loading indicator */}
+          <Backdrop open={loading} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
+          
+          <Box sx={{ paddingTop: '64px' }}></Box>
+          
+          {/* HomePage route */}
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+          </Routes>
+        </Box>
+      </Router>
+    </ThemeProvider>
   );
 }
 
