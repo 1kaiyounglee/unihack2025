@@ -46,7 +46,7 @@ const Map = () => {
             coordinates: [sensor.latitude, sensor.longitude],
           },
           properties: {
-            dbh: sensor.count,
+            count: sensor.count,
           },
         })),
       };
@@ -64,11 +64,11 @@ const Map = () => {
           maxzoom: 15,
           paint: {
             'heatmap-weight': {
-              property: 'dbh',
+              property: 'count',
               type: 'exponential',
               stops: [
                 [1, 0],
-                [62, 1]
+                [500, 1]
               ]
             },
             'heatmap-intensity': {
@@ -120,17 +120,17 @@ const Map = () => {
           minzoom: 14,
           paint: {
             'circle-radius': {
-              property: 'dbh',
+              property: 'count',
               type: 'exponential',
               stops: [
                 [{ zoom: 15, value: 1 }, 5],
-                [{ zoom: 15, value: 62 }, 10],
+                [{ zoom: 15, value: 500 }, 10],
                 [{ zoom: 22, value: 1 }, 20],
-                [{ zoom: 22, value: 62 }, 50]
+                [{ zoom: 22, value: 500 }, 50]
               ]
             },
             'circle-color': {
-              property: 'dbh',
+              property: 'count',
               type: 'exponential',
               stops: [
                 [0, 'rgba(236,222,239,0)'],

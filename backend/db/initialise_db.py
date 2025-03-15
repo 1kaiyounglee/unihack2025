@@ -21,15 +21,15 @@ def insert_sample_data():
     with Session() as session:
 
         ir = [
-            Infrared(longitude=-33.706665, latitude=151.161154, count=10, recorded_datetime=datetime(2025, 3, 14, 12, 0, 0)),
-            Infrared(longitude=-33.707665, latitude=151.162154, count=25, recorded_datetime=datetime(2025, 3, 14, 12, 10, 0)),
-            Infrared(longitude=-33.708665, latitude=151.163154, count=-35, recorded_datetime=datetime(2025, 3, 14, 12, 20, 0)),
+            Infrared(longitude=-33.706665, latitude=151.161154, count=67, recorded_datetime=datetime(2025, 3, 14, 12, 0, 0)),
+            Infrared(longitude=-33.707665, latitude=151.162154, count=475, recorded_datetime=datetime(2025, 3, 14, 12, 10, 0)),
+            Infrared(longitude=-33.708665, latitude=151.163154, count=150, recorded_datetime=datetime(2025, 3, 14, 12, 20, 0)),
             Infrared(longitude=-33.709665, latitude=151.164154, count=50, recorded_datetime=datetime(2025, 3, 14, 12, 30, 0)),
-            Infrared(longitude=-33.710665, latitude=151.165154, count=75, recorded_datetime=datetime(2025, 3, 14, 12, 40, 0)),
+            Infrared(longitude=-33.710665, latitude=151.165154, count=250, recorded_datetime=datetime(2025, 3, 14, 12, 40, 0)),
             Infrared(longitude=-33.711665, latitude=151.166154, count=90, recorded_datetime=datetime(2025, 3, 14, 12, 50, 0)),
-            Infrared(longitude=-33.712665, latitude=151.167154, count=5, recorded_datetime=datetime(2025, 3, 14, 13, 0, 0)),
-            Infrared(longitude=-33.713665, latitude=151.168154, count=15, recorded_datetime=datetime(2025, 3, 14, 13, 10, 0)),
-            Infrared(longitude=-33.714665, latitude=151.169154, count=60, recorded_datetime=datetime(2025, 3, 14, 13, 20, 0)),
+            Infrared(longitude=-33.712665, latitude=151.167154, count=1, recorded_datetime=datetime(2025, 3, 14, 13, 0, 0)),
+            Infrared(longitude=-33.713665, latitude=151.168154, count=500, recorded_datetime=datetime(2025, 3, 14, 13, 10, 0)),
+            Infrared(longitude=-33.714665, latitude=151.169154, count=300, recorded_datetime=datetime(2025, 3, 14, 13, 20, 0)),
             Infrared(longitude=-33.715665, latitude=151.170154, count=120, recorded_datetime=datetime(2025, 3, 14, 13, 30, 0))
         ]
         
