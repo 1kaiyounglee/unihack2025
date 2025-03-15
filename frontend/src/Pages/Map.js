@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { getData } from '../HelperFunctions/GetDatabaseModels';
+import { getSensorData } from '../HelperFunctions/GetDatabaseModels';
 
 
 // Sample data, assuming it's fetched from your database
@@ -17,12 +17,12 @@ import { getData } from '../HelperFunctions/GetDatabaseModels';
 const Map = () => {
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
-  const [data, setData] = useState([]);
+  const [sensorData, setSensorData] = useState([]);
 
   async function fetchData() {
-    const sensorData = await getData("Infrared");
-    setData(sensorData);
-    console.log(data);
+    const sensorReadings = await getSensorData();
+    setSensorData(sensorReadings);
+    console.log(sensorData);
   }
   useEffect(() => {
     fetchData();
@@ -41,7 +41,7 @@ const Map = () => {
       // Prepare the sensor data in GeoJSON format
       const geojsonData = {
         type: 'FeatureCollection',
-        features: data.map((sensor) => ({
+        features: sensorData.map((sensor) => ({
           type: 'Feature',
           geometry: {
             type: 'Point',
