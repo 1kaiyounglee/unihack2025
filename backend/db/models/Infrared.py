@@ -32,11 +32,11 @@ class DateTimeFormat(TypeDecorator):
 class Infrared(Base):
     __tablename__ = 'Infrared'
     
-    id                        = Column(Integer, primary_key=True, autoincrement=True)
-    latitude                  = Column(DECIMAL(9,6), nullable=False)
-    longitude                 = Column(DECIMAL(9,6), nullable=False)
-    count                     = Column(Integer, nullable=False)
-    date_recorded             = Column(DateTimeFormat, nullable=False)
+    id                          = Column(Integer, primary_key=True, autoincrement=True)
+    latitude                    = Column(DECIMAL(9,6), nullable=False)
+    longitude                   = Column(DECIMAL(9,6), nullable=False)
+    count                       = Column(Integer, nullable=False)
+    recorded_datetime           = Column(DateTimeFormat, nullable=False)
     
     # Relationships
     # user                    = relationship('Users', back_populates='bookings')
