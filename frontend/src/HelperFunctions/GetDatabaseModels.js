@@ -43,4 +43,6 @@ export async function getData(tableName, whereClause = "") {
   
     return data; // Return raw data for further processing
 }
+
+
   

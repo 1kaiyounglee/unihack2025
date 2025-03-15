@@ -1,20 +1,42 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { getData } from '../HelperFunctions/GetDatabaseModels';
 
-// Sample data, assuming it's fetched from your database
-const sensorData = [
-  { lat: -33.706665, lon: 151.161154, count: 5, date_recorded: '2025-03-14T12:00:00.000Z' },
-  { lat: -33.707665, lon: 151.162154, count: 8, date_recorded: '2025-03-14T12:00:10.000Z' },
-  { lat: -33.708665, lon: 151.163154, count: 3, date_recorded: '2025-03-14T12:00:20.000Z' },
-  // Add more sample data points here
-];
+// // Sample data, assuming it's fetched from your database
+// const sensorData = [
+//   { lat: -33.706665, lon: 151.161154, count: 5, date_recorded: '2025-03-14T12:00:00.000Z' },
+//   { lat: -33.707665, lon: 151.162154, count: 8, date_recorded: '2025-03-14T12:00:10.000Z' },
+//   { lat: -33.708665, lon: 151.163154, count: 3, date_recorded: '2025-03-14T12:00:20.000Z' },
+//   // Add more sample data points here
+// ];
 
 const Map = () => {
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
+  const [sensorData, setSensorData] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getData("Infared");
+        console.log("data: ", data)
+        const formattedData = data.map((sensor) => ({
+          lat: sensor.latitude,  // 🛠️ Rename latitude → lat
+          lon: sensor.longitude, // 🛠️ Rename longitude → lon
+          count: sensor.count, // 🛠️ Rename people_count → count
+          date_recorded: sensor.date_recorded,
+        }));
+        console.log("formatted: ", formattedData)
+        setSensorData(formattedData); // ✅ Properly updating state
+      } catch (error) {
+        console.error("Error fetching sensor data:", error);
+      }
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
+    if (!sensorData.length || !map) return;
     // Set your Mapbox access token
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_API_TOKEN;
 
