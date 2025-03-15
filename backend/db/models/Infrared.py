@@ -16,6 +16,9 @@ class Infrared(Base):
     count                       = Column(Integer, nullable=False)
     recorded_datetime           = Column(DateTime, nullable=False)
     
+
+    
+    
     # Relationships
     # user                    = relationship('Users', back_populates='bookings')
     # package                 = relationship('Packages', back_populates='bookings')
