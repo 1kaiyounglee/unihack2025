@@ -7,7 +7,7 @@ const Map = () => {
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
   const [sensorData, setSensorData] = useState([]);
-
+  const mapStyle = 'mapbox://styles/mapbox/streets-v12';
   // Fetch data from your API
   async function fetchData() {
     const sensorReadings = await getSensorData();  // Get data from your function
@@ -30,7 +30,7 @@ const Map = () => {
 
     const newMap = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: mapStyle,
       center: [151.161154, -33.706665], // Center the map on your initial data
       zoom: 13,
     });
@@ -46,7 +46,7 @@ const Map = () => {
             coordinates: [sensor.latitude, sensor.longitude],
           },
           properties: {
-            count: sensor.count,
+            dbh: sensor.count,
           },
         })),
       };
@@ -81,16 +81,18 @@ const Map = () => {
               'interpolate',
               ['linear'],
               ['heatmap-density'],
-              0,
-              'rgba(236,222,239,0)',
-              0.2,
-              'rgb(208,209,230)',
-              0.4,
-              'rgb(166,189,219)',
-              0.6,
-              'rgb(103,169,207)',
-              0.8,
-              'rgb(28,144,153)'
+              0,   
+              'rgba(0,0,255,0)',  
+              0.2, 
+              'rgb(0,255,255)',   
+              0.4, 
+              'rgb(0,255,0)',     
+              0.6, 
+              'rgb(255,255,0)',   
+              0.8, 
+              'rgb(255,165,0)',   
+              1,   
+              'rgb(255,0,0)'      
             ],
             'heatmap-radius': {
               stops: [
