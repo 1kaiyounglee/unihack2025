@@ -18,31 +18,52 @@ def setup_database():
     print("Database and tables created!")
 
 
-MIN_LAT, MAX_LAT = -34.1183, -33.5781  # Latitude range for Sydney
-MIN_LON, MAX_LON = 150.5209, 151.3430  # Longitude range for Sydney
+MIN_LAT, MAX_LAT = -33.87281148961029, -33.86727190845753  # Latitude range for Sydney
+MIN_LON, MAX_LON = 151.20713716726718, 151.21391050391784  # Longitude range for Sydney
 
 def generate_random_datetime():
-    """Generate a random datetime within the last 30 days."""
+    """Generate a starting datetime within the last 30 days."""
     start_date = datetime.now() - timedelta(days=30)
-    random_days = random.randint(0, 30)
-    random_time = start_date + timedelta(days=random_days, hours=random.randint(0, 23), minutes=random.randint(0, 59), seconds=random.randint(0, 59))
-    return random_time.strftime('%d/%m/%Y %H:%M:%S')  # Match your database format
+    return start_date
 
-# Insert Sample Data
 def insert_sample_data():
     with Session() as session:
-        ir = [
-            Infrared(
-                latitude=round(random.uniform(MIN_LAT, MAX_LAT), 6),
-                longitude=round(random.uniform(MIN_LON, MAX_LON), 6),
-                count=random.randint(0, 250),  # Random pedestrian count (0-50)
-                recorded_datetime=datetime.strptime(generate_random_datetime(), '%d/%m/%Y %H:%M:%S')
-            )
-            for _ in range(200)
-        ]
-        
-        session.add_all(ir)
+        ir = []
 
+        # Generate 100 unique sensor locations
+        sensors = [
+            {
+                "latitude": round(random.uniform(MIN_LAT, MAX_LAT), 6),
+                "longitude": round(random.uniform(MIN_LON, MAX_LON), 6),
+                "count": random.randint(0, 250)  # Initial pedestrian count (0-250)
+            }
+            for _ in range(100)
+        ]
+
+        for sensor in sensors:
+            current_datetime = generate_random_datetime()
+            current_count = sensor["count"]
+
+            for _ in range(1000):  # 1000 readings per sensor
+                # Random interval between 5 and 20 minutes
+                interval = random.randint(5, 20)
+                current_datetime += timedelta(minutes=interval)
+
+                # Adjust count, ensuring it only changes by ±20
+                change = random.randint(-20, 20)
+                new_count = max(0, current_count + change)  # Ensure count never goes below 0
+                current_count = new_count  # Update count for next iteration
+
+                # Add to list
+                ir.append(Infrared(
+                    latitude=sensor["latitude"],
+                    longitude=sensor["longitude"],
+                    count=current_count,
+                    recorded_datetime=current_datetime
+                ))
+
+        # Bulk insert all records
+        session.add_all(ir)
         session.commit()
         print("Sample data inserted into all tables!")
 

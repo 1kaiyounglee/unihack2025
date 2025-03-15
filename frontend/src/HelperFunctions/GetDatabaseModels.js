@@ -46,20 +46,39 @@ export async function getData(tableName, whereClause = "") {
   
 
 
-export async function getSensorData(whereClause = "") {
-  const data = await getData("Infrared", whereClause);
+export async function getSensorData(dateTime) {
+  try {
+    const response = await fetch("http://localhost:5000/api/database/fetch_sensor_data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ dateTime }),  // ✅ Pass datetime as part of the request
+    });
 
-  if (!data) {
-    return null; 
+    if (!response.ok) {
+      console.log(`\n\n\nERROR: ${response.status}, ${await response.text()}\n\n\n`);
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+
+    if (!data || data.length === 0) {
+      return null; 
+    }
+
+    // ✅ Transform data into the expected format
+    const sensorReadings = data.map((reading) => ({
+      count         : reading.count,
+      latitude      : reading.latitude,
+      longitude     : reading.longitude,
+      lastDateTime  : reading.recorded_datetime,
+    }));
+
+    return sensorReadings;
+
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
   }
-
-  // format insto json object
-  const sensorReadings = data.map((reading) => ({
-    count         : reading.count,
-    latitude      : reading.latitude,
-    longitude     : reading.longitude,
-    lastDateTime  : reading.recorded_datetime,
-  }));
-
-  return sensorReadings; 
 }
