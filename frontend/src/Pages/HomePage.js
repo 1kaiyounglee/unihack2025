@@ -1,56 +1,90 @@
-import React, { useState, useEffect } from 'react';
-import { getData } from '../HelperFunctions/GetDatabaseModels'; // Make sure to update the import path
-import { Box, Typography, CircularProgress, Paper } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { AppBar, Toolbar, IconButton, Drawer, Button, Typography } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-const HomePage = () => {
-  const [data, setData] = useState(null); // State to store the fetched data
-  const [loading, setLoading] = useState(true); // Loading state
+const Homepage = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState(null);
 
+  // Get current location using Geolocation API
   useEffect(() => {
-    // Function to fetch the data from the "Infared" table
-    const fetchData = async () => {
-      const fetchedData = await getData("Infared"); // Fetch data from the "Infared" table
-      if (fetchedData) {
-        setData(fetchedData); // Set the fetched data into state
-      }
-      setLoading(false); // Set loading to false once the data is fetched
-    };
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        setCurrentLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      });
+    }
+  }, []);
 
-    fetchData(); // Call the function to fetch data
-  }, []); // Empty dependency array ensures it runs only once when the component mounts
+  // Default map settings
+  const zoom = 13;
 
-  // Display loading state until the data is fetched
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  // Default icon for Leaflet markers (fix missing icon image issue)
+  useEffect(() => {
+    const defaultIcon = new L.Icon({
+      iconUrl: require('leaflet/dist/images/marker-icon.png'),
+      shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+    });
+    L.Marker.prototype.options.icon = defaultIcon;
+  }, []);
 
-  // Display the fetched data once it's available
+  // get mapbox api key
+  const mapboxToken = process.env.REACT_APP_MAPBOX_API_TOKEN;
+  
+  // set tilelayer url w/ otoken
+  const url = `https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=${mapboxToken}`;
+
   return (
-    <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        HomePage
-      </Typography>
+    <div style={{ height: '100vh' }}>
+      {/* MUI AppBar */}
+      <AppBar position="sticky">
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={() => setDrawerOpen(true)}
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6">Map with MUI and Leaflet</Typography>
+        </Toolbar>
+      </AppBar>
 
-      {data ? (
-        <Paper elevation={3} sx={{ padding: 2 }}>
-          <Typography variant="h6" gutterBottom>
-            Data from Infared Table:
-          </Typography>
-          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-            {JSON.stringify(data, null, 2)} {/* Display raw JSON data */}
-          </Typography>
-        </Paper>
-      ) : (
-        <Typography variant="body1" color="textSecondary">
-          No data found.
-        </Typography>
+      {/* MUI Drawer for Sidebar */}
+      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <div style={{ width: 250 }}>
+          <Button onClick={() => setDrawerOpen(false)}>Close</Button>
+          <Typography variant="h6">Map Controls</Typography>
+          {/* Add more controls or actions here */}
+        </div>
+      </Drawer>
+
+      {/* Map Container */}
+      {currentLocation && (
+        <MapContainer
+          center={currentLocation}
+          zoom={zoom}
+          style={{ width: '100%', height: '100%', zIndex: 0 }} // Ensure map is behind other components
+        >
+          {/* Use the Mapbox URL with the dynamic token */}
+          <TileLayer
+            url={url}
+            attribution='&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <Marker position={currentLocation}>
+            <Popup>Your current location</Popup>
+          </Marker>
+        </MapContainer>
       )}
-    </Box>
+    </div>
   );
 };
 
-export default HomePage;
+export default Homepage;
