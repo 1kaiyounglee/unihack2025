@@ -81,22 +81,22 @@ const Map = () => {
           paint: {
             // Adjust the heatmap intensity based on count
             'heatmap-weight': {
-              property: 'count',  // Use 'count' for intensity
-              type: 'exponential',  // Exponential scaling
+              property: 'count',  
+              type: 'exponential',  
               stops: [
-                [1, 0],     // At count 1, the weight is 0 (no intensity)
-                [50, 0.3],
-                [100, 0.6],
-                [250, 1],   // At count 500, the weight is 1 (full intensity)
+                [1, 0],     
+                [50, 0.05],
+                [100, 0.1],
+                [1000, 1],   
               ]
             },
           
             // Adjust the heatmap intensity
             'heatmap-intensity': {
               stops: [
-                [11, 1],  // At zoom level 11, intensity is 1
-                [15, 2],
-                [20, 3]   
+                [10, 1],  // At zoom level 11, intensity is 1
+                [15, 1.5],
+                [20, 2]   
               ]
             },
           
@@ -116,9 +116,11 @@ const Map = () => {
             // controls radius of 
             'heatmap-radius': {
               stops: [
-                [11, 30], 
-                [15, 50],
-                [20, 75]   
+                [1, 3.75],
+                [5, 18.75],
+                [10, 37.5], 
+                [15, 56.25],
+                [20, 75],   
               ]
             },
           
@@ -137,48 +139,48 @@ const Map = () => {
         'waterway-label'
       );
 
-      newMap.addLayer(
-        {
-          id: 'density-points',
-          type: 'circle',
-          source: 'sensor-data',
-          minzoom: 14,
-          paint: {
-            'circle-radius': {
-              property: 'count',
-              type: 'exponential',
-              stops: [
-                [{ zoom: 15, value: 1 }, 5],
-                // [{ zoom: 15, value: 500 }, 10],
-                // [{ zoom: 22, value: 1 }, 20],
-                // [{ zoom: 22, value: 500 }, 50]
-              ]
-            },
-            'circle-color': {
-              property: 'count',
-              type: 'exponential',
-              stops: [
-                [0, 'rgba(236,222,239,0)'],
-                [10, 'rgb(236,222,239)'],
-                [20, 'rgb(208,209,230)'],
-                [30, 'rgb(166,189,219)'],
-                [40, 'rgb(103,169,207)'],
-                [50, 'rgb(28,144,153)'],
-                [60, 'rgb(1,108,89)']
-              ]
-            },
-            'circle-stroke-color': 'white',
-            'circle-stroke-width': 1,
-            'circle-opacity': {
-              stops: [
-                [14, 0],
-                [15, 1]
-              ]
-            }
-          }
-        },
-        'waterway-label'
-      );
+      // newMap.addLayer(
+      //   {
+      //     id: 'density-points',
+      //     type: 'circle',
+      //     source: 'sensor-data',
+      //     minzoom: 14,
+      //     paint: {
+      //       'circle-radius': {
+      //         property: 'count',
+      //         type: 'exponential',
+      //         stops: [
+      //           [{ zoom: 15, value: 1 }, 5],
+      //           // [{ zoom: 15, value: 500 }, 10],
+      //           // [{ zoom: 22, value: 1 }, 20],
+      //           // [{ zoom: 22, value: 500 }, 50]
+      //         ]
+      //       },
+      //       'circle-color': {
+      //         property: 'count',
+      //         type: 'exponential',
+      //         stops: [
+      //           [0, 'rgba(236,222,239,0)'],
+      //           [10, 'rgb(236,222,239)'],
+      //           [20, 'rgb(208,209,230)'],
+      //           [30, 'rgb(166,189,219)'],
+      //           [40, 'rgb(103,169,207)'],
+      //           [50, 'rgb(28,144,153)'],
+      //           [60, 'rgb(1,108,89)']
+      //         ]
+      //       },
+      //       'circle-stroke-color': 'white',
+      //       'circle-stroke-width': 1,
+      //       'circle-opacity': {
+      //         stops: [
+      //           [14, 0],
+      //           [15, 1]
+      //         ]
+      //       }
+      //     }
+      //   },
+      //   'waterway-label'
+      // );
     });
 
     setMap(newMap);
