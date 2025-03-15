@@ -43,7 +43,7 @@ const Map = () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [sensor.latitude, sensor.longitude],
+            coordinates: [sensor.longitude, sensor.latitude],
           },
           properties: {
             count: sensor.count,
@@ -63,51 +63,55 @@ const Map = () => {
           source: 'sensor-data',
           maxzoom: 15,
           paint: {
+            // Adjust the heatmap intensity based on count
             'heatmap-weight': {
-              property: 'count',
-              type: 'exponential',
+              property: 'count',  // Use 'count' for intensity
+              type: 'exponential',  // Exponential scaling
               stops: [
-                [1, 0],
-                [500, 1]
+                [1, 0],     // At count 1, the weight is 0 (no intensity)
+                [500, 1],   // At count 500, the weight is 1 (full intensity)
               ]
             },
+          
+            // Adjust the heatmap intensity
             'heatmap-intensity': {
               stops: [
-                [11, 1],
-                [15, 3]
+                [11, 1],  // At zoom level 11, intensity is 1
+                [15, 3]   // At zoom level 15, intensity is scaled to 3
               ]
             },
+          
+            // Adjust the heatmap colors for temperature scale (low to high density)
             'heatmap-color': [
               'interpolate',
               ['linear'],
-              ['heatmap-density'],
-              0,   
-              'rgba(0,0,255,0)',  
-              0.2, 
-              'rgb(0,255,255)',   
-              0.4, 
-              'rgb(0,255,0)',     
-              0.6, 
-              'rgb(255,255,0)',   
-              0.8, 
-              'rgb(255,165,0)',   
-              1,   
-              'rgb(255,0,0)'      
+              ['heatmap-density'], // Density is mapped to color
+              0, 'rgba(0,0,255,0)',   // Blue (cool)
+              0.2, 'rgb(0,255,255)',  // Cyan
+              0.4, 'rgb(0,255,0)',    // Green
+              0.6, 'rgb(255,255,0)',  // Yellow
+              0.8, 'rgb(255,165,0)',  // Orange
+              1, 'rgb(255,0,0)'       // Red (hot)
             ],
+          
+            // Control the radius of heatmap cells (should remain constant)
             'heatmap-radius': {
               stops: [
-                [11, 15],
-                [15, 20]
+                [11, 15],  // At zoom level 11, the radius is 15
+                [15, 20]   // At zoom level 15, the radius increases to 20
               ]
             },
+          
+            // Keep heatmap visible at higher zoom levels
             'heatmap-opacity': {
-              default: 1,
+              default: 1,  // Keep opacity at 100% for all zoom levels
               stops: [
-                [14, 1],
-                [15, 0]
+                [14, 1],  // Full opacity at zoom level 14
+                [15, 1],  // Full opacity at zoom level 15
               ]
             }
           }
+          
         },
         'waterway-label'
       );
@@ -124,9 +128,9 @@ const Map = () => {
               type: 'exponential',
               stops: [
                 [{ zoom: 15, value: 1 }, 5],
-                [{ zoom: 15, value: 500 }, 10],
-                [{ zoom: 22, value: 1 }, 20],
-                [{ zoom: 22, value: 500 }, 50]
+                // [{ zoom: 15, value: 500 }, 10],
+                // [{ zoom: 22, value: 1 }, 20],
+                // [{ zoom: 22, value: 500 }, 50]
               ]
             },
             'circle-color': {
