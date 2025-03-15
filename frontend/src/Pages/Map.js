@@ -8,6 +8,8 @@ const Map = () => {
   const [map, setMap] = useState(null);
   const [sensorData, setSensorData] = useState([]);
   const mapStyle = 'mapbox://styles/mapbox/streets-v12';
+  let currentPopup = null;  // To store the current popup to close it when needed
+
   // Fetch data from your API
   async function fetchData() {
     const currentDateTime = new Date().toISOString();
