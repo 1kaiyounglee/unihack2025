@@ -22,7 +22,7 @@ const Map = () => {
     // Set up the interval to refetch data every 5 seconds (5000 ms)
     const intervalId = setInterval(() => {
       fetchData();  // fetch new adat aevery minute
-    }, 60000);
+    }, 300000);
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
@@ -42,7 +42,7 @@ const Map = () => {
     const newMap = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: mapStyle,
-      center: [151.161154, -33.706665], // Center the map on your initial data
+      center: [151.210863, -33.868448], // Center the map on your initial data
       zoom: 13,
     });
 
@@ -77,7 +77,7 @@ const Map = () => {
           id: 'people-density',
           type: 'heatmap',
           source: 'sensor-data',
-          maxzoom: 15,
+          maxzoom: 24,
           paint: {
             // Adjust the heatmap intensity based on count
             'heatmap-weight': {
@@ -95,7 +95,8 @@ const Map = () => {
             'heatmap-intensity': {
               stops: [
                 [11, 1],  // At zoom level 11, intensity is 1
-                [15, 3]   // At zoom level 15, intensity is scaled to 3
+                [15, 2],
+                [20, 3]   
               ]
             },
           
@@ -112,12 +113,12 @@ const Map = () => {
               1, 'rgb(255,0,0)'       // Red (hot)
             ],
           
-            // Control the radius of heatmap cells (should remain constant)
+            // controls radius of 
             'heatmap-radius': {
               stops: [
-                [11, 15], 
-                [15, 20],
-                [20, 50]   
+                [11, 30], 
+                [15, 50],
+                [20, 75]   
               ]
             },
           
