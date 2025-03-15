@@ -3,49 +3,47 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { getSensorData } from '../HelperFunctions/GetDatabaseModels';
 
-
-// Sample data, assuming it's fetched from your database
-
-
-// const sensorData = [
-//   { lat: -33.706665, lon: 151.161154, count: 5, date_recorded: '2025-03-14T12:00:00.000Z' },
-//   { lat: -33.707665, lon: 151.162154, count: 8, date_recorded: '2025-03-14T12:00:10.000Z' },
-//   { lat: -33.708665, lon: 151.163154, count: 3, date_recorded: '2025-03-14T12:00:20.000Z' },
-//   // Add more sample data points here
-// ];
-
 const Map = () => {
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
   const [sensorData, setSensorData] = useState([]);
-
+  const mapStyle = 'mapbox://styles/mapbox/streets-v12';
+  // Fetch data from your API
   async function fetchData() {
-    const sensorReadings = await getSensorData();
-    setSensorData(sensorReadings);
-    console.log(sensorData);
+    const sensorReadings = await getSensorData();  // Get data from your function
+    setSensorData(sensorReadings);  // Set the data to the state
   }
+
+  // Fetch data once when the component mounts
   useEffect(() => {
     fetchData();
+  }, []);  // Empty dependency array means this runs once, after component mounts
+
+  // UseEffect to log sensorData after it's been updated
+  useEffect(() => {
+    console.log(sensorData);  // This will log the updated sensorData after the state has changed
+  }, [sensorData]);  // This will trigger whenever sensorData changes
+
+  useEffect(() => {
     // Set your Mapbox access token
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_API_TOKEN;
 
     const newMap = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: mapStyle,
       center: [151.161154, -33.706665], // Center the map on your initial data
       zoom: 13,
     });
 
     // Set up the map after it's loaded
     newMap.on('load', () => {
-      // Prepare the sensor data in GeoJSON format
       const geojsonData = {
         type: 'FeatureCollection',
         features: sensorData.map((sensor) => ({
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [sensor.lon, sensor.lat],
+            coordinates: [sensor.latitude, sensor.longitude],
           },
           properties: {
             count: sensor.count,
@@ -53,58 +51,55 @@ const Map = () => {
         })),
       };
 
-      // Add a source for the heatmap layer using GeoJSON data
       newMap.addSource('sensor-data', {
         type: 'geojson',
         data: geojsonData,
       });
+
       newMap.addLayer(
         {
-          id: 'people-denisty',
+          id: 'people-density',
           type: 'heatmap',
           source: 'sensor-data',
           maxzoom: 15,
           paint: {
-            // increase weight as diameter breast height increases
             'heatmap-weight': {
-              property: 'dbh',
+              property: 'count',
               type: 'exponential',
               stops: [
                 [1, 0],
-                [62, 1]
+                [500, 1]
               ]
             },
-            // increase intensity as zoom level increases
             'heatmap-intensity': {
               stops: [
                 [11, 1],
                 [15, 3]
               ]
             },
-            // assign color values be applied to points depending on their density
             'heatmap-color': [
               'interpolate',
               ['linear'],
               ['heatmap-density'],
-              0,
-              'rgba(236,222,239,0)',
-              0.2,
-              'rgb(208,209,230)',
-              0.4,
-              'rgb(166,189,219)',
-              0.6,
-              'rgb(103,169,207)',
-              0.8,
-              'rgb(28,144,153)'
+              0,   
+              'rgba(0,0,255,0)',  
+              0.2, 
+              'rgb(0,255,255)',   
+              0.4, 
+              'rgb(0,255,0)',     
+              0.6, 
+              'rgb(255,255,0)',   
+              0.8, 
+              'rgb(255,165,0)',   
+              1,   
+              'rgb(255,0,0)'      
             ],
-            // increase radius as zoom increases
             'heatmap-radius': {
               stops: [
                 [11, 15],
                 [15, 20]
               ]
             },
-            // decrease opacity to transition into the circle layer
             'heatmap-opacity': {
               default: 1,
               stops: [
@@ -124,19 +119,18 @@ const Map = () => {
           source: 'sensor-data',
           minzoom: 14,
           paint: {
-            // increase the radius of the circle as the zoom level and dbh value increases
             'circle-radius': {
-              property: 'dbh',
+              property: 'count',
               type: 'exponential',
               stops: [
                 [{ zoom: 15, value: 1 }, 5],
-                [{ zoom: 15, value: 62 }, 10],
+                [{ zoom: 15, value: 500 }, 10],
                 [{ zoom: 22, value: 1 }, 20],
-                [{ zoom: 22, value: 62 }, 50]
+                [{ zoom: 22, value: 500 }, 50]
               ]
             },
             'circle-color': {
-              property: 'dbh',
+              property: 'count',
               type: 'exponential',
               stops: [
                 [0, 'rgba(236,222,239,0)'],
@@ -160,72 +154,12 @@ const Map = () => {
         },
         'waterway-label'
       );
-      // // Add the heatmap layer
-      // newMap.addLayer({
-      //   id: 'heatmap-layer',
-      //   type: 'heatmap',
-      //   source: 'sensor-data',
-      //   maxzoom: 9,
-      //   paint: {
-      //     'heatmap-weight': [
-      //       'interpolate',
-      //       ['linear'],
-      //       ['get', 'count'],  // Get the 'count' property to determine the intensity
-      //       0,
-      //       0,
-      //       10,
-      //       1,
-      //     ],
-      //     'heatmap-intensity': [
-      //       'interpolate',
-      //       ['linear'],
-      //       ['zoom'],
-      //       0,
-      //       1,
-      //       9,
-      //       3,
-      //     ],
-      //     'heatmap-color': [
-      //       'interpolate',
-      //       ['linear'],
-      //       ['heatmap-density'],
-      //       0,
-      //       'rgba(33,102,172,0)',
-      //       0.2,
-      //       'rgb(103,169,207)',
-      //       0.4,
-      //       'rgb(209,229,240)',
-      //       0.6,
-      //       'rgb(253,219,199)',
-      //       0.8,
-      //       'rgb(239,138,98)',
-      //       1,
-      //       'rgb(178,24,43)',
-      //     ],
-      //     'heatmap-radius': [
-      //       'interpolate',
-      //       ['linear'],
-      //       ['zoom'],
-      //       0,
-      //       2,
-      //       9,
-      //       20,
-      //     ],
-      //     'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 7, 1, 9, 0],
-      //   },
-      // }, 'waterway-label');
-    
-    
-    
-    
-    
     });
 
-   
     setMap(newMap);
 
     return () => newMap.remove();
-  }, []);
+  }, [sensorData]);  // Only rerun map setup when sensorData changes
 
   return <div ref={mapContainerRef} style={{ height: '100vh', width: '100%' }} />;
 };
