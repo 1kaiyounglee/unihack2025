@@ -32,3 +32,24 @@ def execute_query():
     except Exception as e:
         print(str(e))
         return jsonify({'error': str(e)}), 500
+    
+    
+
+@api_db.route('/update_sensor', methods=['POST'])
+def update_user():
+    data = request.json
+    try:
+        user_data = {
+            'longitude': data['longitude'],
+            'latitude':data['latitude'],
+            'count':data['count'],
+            'date_recorded':data['date_recorded'],
+        }
+        df = pd.DataFrame([user_data])
+        success = db.upsert_data('Infared', df)
+        if success:
+            return jsonify({"message": "Infared table updated successfully"}), 200
+        else:
+            return jsonify({"message": f"Failed to update infared table {user_data}"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

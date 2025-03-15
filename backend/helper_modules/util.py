@@ -17,4 +17,4 @@ def fetch_and_print_all_tables():
             print(data)
         else:
             print(f"No data found or error in fetching data from {table}.")
-        print("\n" + "="*50 + "\n")
+        print("\n" + "="*75 + "\n")
