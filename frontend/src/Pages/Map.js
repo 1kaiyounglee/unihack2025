@@ -15,10 +15,20 @@ const Map = () => {
     setSensorData(sensorReadings);  // Set the data to the state
   }
 
-  // Fetch data once when the component mounts
   useEffect(() => {
+    // Initial data fetch when the component mounts
     fetchData();
-  }, []);  // Empty dependency array means this runs once, after component mounts
+
+    // Set up the interval to refetch data every 5 seconds (5000 ms)
+    const intervalId = setInterval(() => {
+      fetchData();  // fetch new adat aevery minute
+    }, 60000);
+
+    // Cleanup the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);  // Empty dependency array means this runs once on mount
+
+
 
   // UseEffect to log sensorData after it's been updated
   useEffect(() => {
@@ -34,6 +44,11 @@ const Map = () => {
       style: mapStyle,
       center: [151.161154, -33.706665], // Center the map on your initial data
       zoom: 13,
+    });
+
+    newMap.on('zoomend', () => {
+      const zoomLevel = newMap.getZoom();
+      console.log('Zoom level:', zoomLevel);
     });
 
     // Set up the map after it's loaded
@@ -70,7 +85,9 @@ const Map = () => {
               type: 'exponential',  // Exponential scaling
               stops: [
                 [1, 0],     // At count 1, the weight is 0 (no intensity)
-                [500, 1],   // At count 500, the weight is 1 (full intensity)
+                [50, 0.3],
+                [100, 0.6],
+                [250, 1],   // At count 500, the weight is 1 (full intensity)
               ]
             },
           
@@ -98,8 +115,9 @@ const Map = () => {
             // Control the radius of heatmap cells (should remain constant)
             'heatmap-radius': {
               stops: [
-                [11, 15],  // At zoom level 11, the radius is 15
-                [15, 20]   // At zoom level 15, the radius increases to 20
+                [11, 15], 
+                [15, 20],
+                [20, 50]   
               ]
             },
           
@@ -107,8 +125,9 @@ const Map = () => {
             'heatmap-opacity': {
               default: 1,  // Keep opacity at 100% for all zoom levels
               stops: [
-                [14, 1],  // Full opacity at zoom level 14
+                [11, 1],  // Keep opacity moderate at zoom level 11
                 [15, 1],  // Full opacity at zoom level 15
+                [20, 1]  // Full opacity at zoom level 20
               ]
             }
           }
