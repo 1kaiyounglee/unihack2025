@@ -16,6 +16,9 @@ def setup_database():
     Base.metadata.create_all(engine)  # This creates all tables defined
     print("Database and tables created!")
 
+
+
+
 # Insert Sample Data
 def insert_sample_data():
     with Session() as session:
