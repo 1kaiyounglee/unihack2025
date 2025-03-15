@@ -33,7 +33,51 @@ def execute_query():
         print(str(e))
         return jsonify({'error': str(e)}), 500
     
-    
+
+@api_db.route('/fetch_sensor_data', methods=['POST'])
+def fetch_sensor_data():
+    try:
+        # Get the datetime from the frontend request
+        data = request.json
+        passed_datetime = data.get('dateTime')
+
+        if not passed_datetime:
+            return jsonify({'error': 'Invalid datetime provided.'}), 400
+
+        # SQL query to get the most recent record before the passed datetime
+        query = """
+        WITH RankedData AS (
+            SELECT 
+                latitude, 
+                longitude, 
+                count, 
+                recorded_datetime,
+                ROW_NUMBER() OVER (
+                    PARTITION BY latitude, longitude 
+                    ORDER BY recorded_datetime DESC
+                ) AS rn
+            FROM Infrared
+            WHERE recorded_datetime < :recorded_datetime
+        )
+        SELECT latitude, longitude, count, recorded_datetime
+        FROM RankedData
+        WHERE rn = 1;
+        """
+
+        # Fetch data using db_helper function\
+        df = db.fetch_data(query, {"recorded_datetime": passed_datetime})
+
+        # Convert DataFrame to JSON response
+        if df is not None and not df.empty:
+            result_data = df.to_dict(orient='records')  # Get the first row
+            return jsonify(result_data), 200
+        else:
+            return jsonify({'message': 'No data found before the given datetime.'}), 404
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': str(e)}), 500
+
 
 @api_db.route('/update_sensor', methods=['POST'])
 def update_user():
