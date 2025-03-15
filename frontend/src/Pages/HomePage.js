@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { AppBar, Toolbar, IconButton, Drawer, Button, Typography } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import {IconButton, Drawer, Button, Typography } from '@mui/material';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const Homepage = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
 
   // Get current location using Geolocation API
@@ -41,30 +39,9 @@ const Homepage = () => {
 
   return (
     <div style={{ height: '100vh' }}>
-      {/* MUI AppBar */}
-      <AppBar position="sticky">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={() => setDrawerOpen(true)}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6">Map with MUI and Leaflet</Typography>
-        </Toolbar>
-      </AppBar>
+      
 
-      {/* MUI Drawer for Sidebar */}
-      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        <div style={{ width: 250 }}>
-          <Button onClick={() => setDrawerOpen(false)}>Close</Button>
-          <Typography variant="h6">Map Controls</Typography>
-          {/* Add more controls or actions here */}
-        </div>
-      </Drawer>
+      
 
       {/* Map Container */}
       {currentLocation && (

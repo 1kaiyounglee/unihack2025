@@ -3,7 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Box, CircularProgress, Backdrop } from '@mui/material';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { deepPurple } from '@mui/material/colors';
-
+import Navbar from './Components/Navbar';
 // Import your page component
 import HomePage from './Pages/HomePage';
 
@@ -29,7 +29,7 @@ function App() {
           <Backdrop open={loading} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <CircularProgress color="inherit" />
           </Backdrop>
-          
+          <Navbar/>
           <Box sx={{ paddingTop: '64px' }}></Box>
           
           {/* HomePage route */}
