@@ -10,7 +10,8 @@ const Map = () => {
   const mapStyle = 'mapbox://styles/mapbox/streets-v12';
   // Fetch data from your API
   async function fetchData() {
-    const sensorReadings = await getSensorData();  // Get data from your function
+    const currentDateTime = new Date().toISOString();
+    const sensorReadings = await getSensorData(currentDateTime);  // Get data from your function
     setSensorData(sensorReadings);  // Set the data to the state
   }
 
