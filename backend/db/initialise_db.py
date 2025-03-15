@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from models import Infrared
 from db_config import engine, Session
 from datetime import datetime, timedelta
+import random
 
 
 def reset_database():
@@ -16,24 +17,29 @@ def setup_database():
     Base.metadata.create_all(engine)  # This creates all tables defined
     print("Database and tables created!")
 
+
+MIN_LAT, MAX_LAT = -34.1183, -33.5781  # Latitude range for Sydney
+MIN_LON, MAX_LON = 150.5209, 151.3430  # Longitude range for Sydney
+
+def generate_random_datetime():
+    """Generate a random datetime within the last 30 days."""
+    start_date = datetime.now() - timedelta(days=30)
+    random_days = random.randint(0, 30)
+    random_time = start_date + timedelta(days=random_days, hours=random.randint(0, 23), minutes=random.randint(0, 59), seconds=random.randint(0, 59))
+    return random_time.strftime('%d/%m/%Y %H:%M:%S')  # Match your database format
+
 # Insert Sample Data
 def insert_sample_data():
     with Session() as session:
-
         ir = [
-            Infrared(longitude=-33.706665, latitude=151.161154, count=67, recorded_datetime=datetime(2025, 3, 14, 12, 0, 0)),
-            Infrared(longitude=-33.707665, latitude=151.162154, count=475, recorded_datetime=datetime(2025, 3, 14, 12, 10, 0)),
-            Infrared(longitude=-33.708665, latitude=151.163154, count=150, recorded_datetime=datetime(2025, 3, 14, 12, 20, 0)),
-            Infrared(longitude=-33.709665, latitude=151.164154, count=50, recorded_datetime=datetime(2025, 3, 14, 12, 30, 0)),
-            Infrared(longitude=-33.710665, latitude=151.165154, count=250, recorded_datetime=datetime(2025, 3, 14, 12, 40, 0)),
-            Infrared(longitude=-33.711665, latitude=151.166154, count=90, recorded_datetime=datetime(2025, 3, 14, 12, 50, 0)),
-            Infrared(longitude=-33.712665, latitude=151.167154, count=1, recorded_datetime=datetime(2025, 3, 14, 13, 0, 0)),
-            Infrared(longitude=-33.713665, latitude=151.168154, count=500, recorded_datetime=datetime(2025, 3, 14, 13, 10, 0)),
-            Infrared(longitude=-33.714665, latitude=151.169154, count=300, recorded_datetime=datetime(2025, 3, 14, 13, 20, 0)),
-            Infrared(longitude=-33.715665, latitude=151.170154, count=120, recorded_datetime=datetime(2025, 3, 14, 13, 30, 0))
+            Infrared(
+                latitude=round(random.uniform(MIN_LAT, MAX_LAT), 6),
+                longitude=round(random.uniform(MIN_LON, MAX_LON), 6),
+                count=random.randint(0, 250),  # Random pedestrian count (0-50)
+                recorded_datetime=datetime.strptime(generate_random_datetime(), '%d/%m/%Y %H:%M:%S')
+            )
+            for _ in range(200)
         ]
-        
-
         
         session.add_all(ir)
 
