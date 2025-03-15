@@ -5,3 +5,4 @@ Base = declarative_base()
 
 # Import all model classes so they are registered with Base
 from .Infrared import Infrared
+from .Event import Event

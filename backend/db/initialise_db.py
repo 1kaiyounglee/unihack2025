@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Infrared
+from models import Infrared, Event
 from db_config import engine, Session
 from datetime import datetime, timedelta
 import random
@@ -28,6 +28,11 @@ def generate_random_datetime():
 
 def insert_sample_data():
     with Session() as session:
+        events = [ 
+            Event(latitude=-33.704123, longitude=151.161057, name="Party at Kyan Jia Ren Gans house", description="31 Awatea Rd, St Ives Chase, New South Wales -33.704123 151.161057", start_datetime=datetime.now(), duration=1200),
+            Event(latitude=-33.870042, longitude=151.210524, name="food", description="mmmmm", start_datetime=datetime.now(), duration=800)
+        ]
+
         ir = []
 
         # Generate 100 unique sensor locations
@@ -64,6 +69,7 @@ def insert_sample_data():
 
         # Bulk insert all records
         session.add_all(ir)
+        session.add_all(events)
         session.commit()
         print("Sample data inserted into all tables!")
 
