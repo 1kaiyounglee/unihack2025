@@ -44,3 +44,22 @@ export async function getData(tableName, whereClause = "") {
     return data; // Return raw data for further processing
 }
   
+
+
+export async function getSensorData(whereClause = "") {
+  const data = await getData("Infrared", whereClause);
+
+  if (!data) {
+    return null; 
+  }
+
+  // format insto json object
+  const sensorReadings = data.map((reading) => ({
+    count         : reading.count,
+    latitude      : reading.latitude,
+    longitude     : reading.longitude,
+    lastDateTime  : reading.recorded_datetime,
+  }));
+
+  return sensorReadings; 
+}
