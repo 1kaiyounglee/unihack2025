@@ -79,6 +79,51 @@ def fetch_sensor_data():
         return jsonify({'error': str(e)}), 500
 
 
+@api_db.route('/calculate_event_population', methods=['GET'])
+def calculate_event_population():
+    try:
+        query = """
+        WITH InfraredNearby AS (
+            SELECT i.latitude, i.longitude, i.count, i.recorded_datetime, e.id, e.name,
+                (6371000 * acos(
+                    cos(radians(e.latitude)) * cos(radians(i.latitude)) * 
+                    cos(radians(i.longitude) - radians(e.longitude)) + 
+                    sin(radians(e.latitude)) * sin(radians(i.latitude))
+                )) AS distance_m
+            FROM Infrared i
+            JOIN Event e ON 1=1  -- Cartesian join to compare all event-infrared pairs
+        ),
+        RankedData AS (
+            SELECT id, name, latitude, longitude, count, recorded_datetime, distance_m,
+                ROW_NUMBER() OVER (
+                    PARTITION BY latitude, longitude 
+                    ORDER BY recorded_datetime DESC
+                ) AS rn
+            FROM InfraredNearby
+            WHERE distance_m <= 100
+        )
+        SELECT e.id, e.name, e.latitude, e.longitude, COALESCE(SUM(r.count), 0) AS total_count
+        FROM Event e
+        LEFT JOIN RankedData r ON e.id = r.id
+        WHERE r.rn = 1 OR r.rn IS NULL  -- Include events even if no matching data in Infrared
+        GROUP BY e.id, e.name, e.latitude, e.longitude;
+        """
+
+        # Fetch data using db_helper function\
+        df = db.fetch_data(query)
+
+        # Convert DataFrame to JSON response
+        if df is not None and not df.empty:
+            result_data = df.to_dict(orient='records')
+            return jsonify(result_data), 200
+        else:
+            return jsonify({'message': 'No data found'}), 404
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': str(e)}), 500
+
+
 @api_db.route('/update_sensor', methods=['POST'])
 def update_user():
     data = request.json
