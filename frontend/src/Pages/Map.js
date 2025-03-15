@@ -43,7 +43,7 @@ const Map = () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [sensor.latitude, sensor.longitude],
+            coordinates: [sensor.longitude, sensor.latitude],
           },
           properties: {
             count: sensor.count,
