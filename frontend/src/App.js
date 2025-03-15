@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { deepPurple } from '@mui/material/colors';
 import Navbar from './Components/Navbar';
 // Import your page component
-import HomePage from './Pages/HomePage';
+import Map from './Pages/Map';
 
 const darkTheme = createTheme({
   palette: {
@@ -32,9 +32,9 @@ function App() {
           <Navbar/>
           <Box sx={{ paddingTop: '64px' }}></Box>
           
-          {/* HomePage route */}
+          {/* Map route */}
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<Map />} />
           </Routes>
         </Box>
       </Router>
