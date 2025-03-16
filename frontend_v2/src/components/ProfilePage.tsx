@@ -3,11 +3,11 @@ import { Settings, MapPin, Calendar, Users } from 'lucide-react';
 const ProfilePage = () => {
   // Mock user data
   const user = {
-    name: 'Alex Johnson',
-    username: '@alexj',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+    name: 'Ethan Kyan Kai Jett Joel',
+    username: '@ekkjj',
+    avatar: 'unihack_inc_logo.jpeg',
     bio: 'Always looking for the next exciting event! 🎉',
-    location: 'San Francisco, CA',
+    location: 'Sydney, NSW',
     stats: {
       eventsCreated: 12,
       eventsAttended: 48,
@@ -16,9 +16,9 @@ const ProfilePage = () => {
     },
     upcomingEvents: [{
       id: 1,
-      name: 'Tech Meetup 2024',
+      name: 'Unihack 2025',
       date: 'Mar 15',
-      attendees: 45
+      attendees: 100
     }, {
       id: 2,
       name: 'Summer Music Festival',
