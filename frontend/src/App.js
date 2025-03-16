@@ -4,9 +4,10 @@ import { Box, CircularProgress, Backdrop } from '@mui/material';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { deepPurple } from '@mui/material/colors';
 import Navbar from './Components/Navbar';
+import AlertsModal from './Components/AlertsModal';
+
 // Import your page component
 import Map from './Pages/Map';
-
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -14,9 +15,18 @@ const darkTheme = createTheme({
   },
 });
 
+
 function App() {
   const [loading, setLoading] = useState(false);
-
+  const [isAlertsOpen, setAlertsOpen] = useState(false);
+  
+  const openAlertsModal = () => {
+    setAlertsOpen(true);
+  };
+  
+  const closeAlertsModal = () => {
+    setAlertsOpen(false);
+  }
   const handleSetLoading = (isLoading) => {
     setLoading(isLoading);
   };
@@ -29,7 +39,10 @@ function App() {
           <Backdrop open={loading} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <CircularProgress color="inherit" />
           </Backdrop>
-          <Navbar/>
+          <Navbar
+            onAlertsClick={openAlertsModal}
+          
+          />
           <Box sx={{ paddingTop: '64px' }}></Box>
           
           {/* Map route */}
@@ -37,6 +50,16 @@ function App() {
             <Route path="/" element={<Map />} />
           </Routes>
         </Box>
+
+        <AlertsModal
+            open={isAlertsOpen}
+            onClose={closeAlertsModal}
+            setLoading={handleSetLoading}
+          />
+
+
+
+
       </Router>
     </ThemeProvider>
   );
