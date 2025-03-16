@@ -28,6 +28,12 @@ def generate_random_datetime():
 
 def insert_sample_data():
     with Session() as session:
+
+        alerts = [
+            Alerts(latitude=-33.870042, longitude=151.210524, radius=100, threshold=200),
+            Alerts(latitude=-33.704123, longitude=151.161057, radius=600, threshold=10)
+        ]
+
         events = [ 
             Event(latitude=-33.704123, longitude=151.161057, name="Party at Kyan Jia Ren Gans house", description="31 Awatea Rd, St Ives Chase, New South Wales -33.704123 151.161057", start_datetime=datetime.now(), duration=1200),
             Event(latitude=-33.870042, longitude=151.210524, name="food", description="mmmmm", start_datetime=datetime.now(), duration=800)
@@ -66,14 +72,10 @@ def insert_sample_data():
                     count=current_count,
                     recorded_datetime=current_datetime
                 ))
-        alerts = [
-            Alerts(latitude=-33.868300, longitude=151.213454, radius=500, threshold=3000)
-
-        ]
         # Bulk insert all records
-        session.add_all(ir)
         session.add_all(events)
         session.add_all(alerts)
+        session.add_all(ir)
         session.commit()
         print("Sample data inserted into all tables!")
 
