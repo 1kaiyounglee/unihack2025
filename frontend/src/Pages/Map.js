@@ -154,8 +154,7 @@ const Map = () => {
             new mapboxgl.Popup()
               .setLngLat([longitude, latitude])  // Set the popup position to the alert's location
               .setHTML(`
-                <h3>Alert</h3>
-                <p>Count: ${count} People</p>
+                <strong>Count:</strong> ${count}
               `)  // Add the alert's radius as HTML content
               .addTo(newMap);  // Add the popup to the map
           });
