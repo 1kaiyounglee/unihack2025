@@ -150,7 +150,7 @@ const Map = () => {
             .addTo(newMap);  // Add the marker to the map
       
           // Add a click event listener to the marker
-          alertMarker.getElement().addEventListener('click', () => {
+          alertMarker.getElement().addEventListener('click', 'poeple-density', () => {
             console.log("\n\n\n CLICKED\n\n\n");
             new mapboxgl.Popup()
               .setLngLat([longitude, latitude])  
