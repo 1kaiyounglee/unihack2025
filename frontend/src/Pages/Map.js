@@ -153,12 +153,9 @@ const Map = () => {
           alertMarker.getElement().addEventListener('click', () => {
             console.log("\n\n\n CLICKED\n\n\n");
             new mapboxgl.Popup()
-              .setLngLat([longitude, latitude])  // Set the popup position to the alert's location
-              .setHTML(`
-                <h3>Alert</h3>
-                <p><strong>Count:</strong> ${count}</p>
-              `)  // Add the alert's radius as HTML content
-              .addTo(newMap);  // Add the popup to the map
+              .setLngLat([longitude, latitude])  
+              .setHTML(`Count: ${count}`)  
+              .addTo(newMap);  
           });
         });
       }
