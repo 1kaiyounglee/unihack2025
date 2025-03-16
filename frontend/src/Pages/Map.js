@@ -1,44 +1,51 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { getSensorData } from '../HelperFunctions/GetDatabaseModels';
+import { getSensorData, scanAlerts } from '../HelperFunctions/GetDatabaseModels';
 
 const Map = () => {
   const mapContainerRef = useRef(null);
   const [map, setMap] = useState(null);
   const [sensorData, setSensorData] = useState([]);
+  const [alerts, setAlerts] = useState([]);
   const mapStyle = 'mapbox://styles/mapbox/streets-v12';
   let currentPopup = null;  // To store the current popup to close it when needed
 
-  // Fetch data from your API
+  // Fetch sensor data
   async function fetchData() {
     const currentDateTime = new Date().toISOString();
     const sensorReadings = await getSensorData(currentDateTime);  // Get data from your function
     setSensorData(sensorReadings);  // Set the data to the state
   }
 
+  // Fetch alerts
+  async function fetchAlerts() {
+    const rawAlerts = await scanAlerts();
+    console.log(`Alerts: ${rawAlerts}`);
+    setAlerts(rawAlerts);
+  }
+
   useEffect(() => {
     // Initial data fetch when the component mounts
     fetchData();
+    fetchAlerts();
 
-    // Set up the interval to refetch data every 5 seconds (5000 ms)
+    // Set interval to fetch data every 5 minutes
     const intervalId = setInterval(() => {
-      fetchData();  // fetch new adat aevery minute
-    }, 300000);
+      fetchData();  // fetch new data every 5 minutes
+      fetchAlerts(); // Fetch alerts as well
+    }, 300000); // 300000 ms = 5 minutes
 
     // Cleanup the interval when the component unmounts
     return () => clearInterval(intervalId);
   }, []);  // Empty dependency array means this runs once on mount
 
-
-
-  // UseEffect to log sensorData after it's been updated
   useEffect(() => {
     console.log(sensorData);  // This will log the updated sensorData after the state has changed
   }, [sensorData]);  // This will trigger whenever sensorData changes
 
   useEffect(() => {
-    // Set your Mapbox access token
+    // Set up the map
     mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_API_TOKEN;
 
     const newMap = new mapboxgl.Map({
@@ -92,30 +99,24 @@ const Map = () => {
                 [1000, 1],   
               ]
             },
-          
-            // Adjust the heatmap intensity
             'heatmap-intensity': {
               stops: [
-                [10, 1],  // At zoom level 11, intensity is 1
+                [10, 1],  
                 [15, 1.5],
                 [20, 2]   
               ]
             },
-          
-            // Adjust the heatmap colors for temperature scale (low to high density)
             'heatmap-color': [
               'interpolate',
               ['linear'],
-              ['heatmap-density'], // Density is mapped to color
-              0, 'rgba(0,0,255,0)',   // Blue (cool)
-              0.2, 'rgb(0,255,255)',  // Cyan
-              0.4, 'rgb(0,255,0)',    // Green
-              0.6, 'rgb(255,255,0)',  // Yellow
-              0.8, 'rgb(255,165,0)',  // Orange
-              1, 'rgb(255,0,0)'       // Red (hot)
+              ['heatmap-density'], 
+              0, 'rgba(0,0,255,0)',   
+              0.2, 'rgb(0,255,255)',  
+              0.4, 'rgb(0,255,0)',    
+              0.6, 'rgb(255,255,0)',  
+              0.8, 'rgb(255,165,0)',  
+              1, 'rgb(255,0,0)'       
             ],
-          
-            // controls radius of 
             'heatmap-radius': {
               stops: [
                 [1, 3.75],
@@ -125,70 +126,46 @@ const Map = () => {
                 [20, 75],   
               ]
             },
-          
-            // Keep heatmap visible at higher zoom levels
             'heatmap-opacity': {
-              default: 1,  // Keep opacity at 100% for all zoom levels
+              default: 1,  
               stops: [
-                [11, 1],  // Keep opacity moderate at zoom level 11
-                [15, 1],  // Full opacity at zoom level 15
-                [20, 1]  // Full opacity at zoom level 20
+                [11, 1],  
+                [15, 1],  
+                [20, 1]  
               ]
             }
           }
-          
         },
         'waterway-label'
       );
 
-      // newMap.addLayer(
-      //   {
-      //     id: 'density-points',
-      //     type: 'circle',
-      //     source: 'sensor-data',
-      //     minzoom: 14,
-      //     paint: {
-      //       'circle-radius': {
-      //         property: 'count',
-      //         type: 'exponential',
-      //         stops: [
-      //           [{ zoom: 15, value: 1 }, 5],
-      //           // [{ zoom: 15, value: 500 }, 10],
-      //           // [{ zoom: 22, value: 1 }, 20],
-      //           // [{ zoom: 22, value: 500 }, 50]
-      //         ]
-      //       },
-      //       'circle-color': {
-      //         property: 'count',
-      //         type: 'exponential',
-      //         stops: [
-      //           [0, 'rgba(236,222,239,0)'],
-      //           [10, 'rgb(236,222,239)'],
-      //           [20, 'rgb(208,209,230)'],
-      //           [30, 'rgb(166,189,219)'],
-      //           [40, 'rgb(103,169,207)'],
-      //           [50, 'rgb(28,144,153)'],
-      //           [60, 'rgb(1,108,89)']
-      //         ]
-      //       },
-      //       'circle-stroke-color': 'white',
-      //       'circle-stroke-width': 1,
-      //       'circle-opacity': {
-      //         stops: [
-      //           [14, 0],
-      //           [15, 1]
-      //         ]
-      //       }
-      //     }
-      //   },
-      //   'waterway-label'
-      // );
+      // Add Alerts to map
+      if (alerts.length > 0) {
+        alerts.forEach((alert) => {
+          const { latitude, longitude, count } = alert;
+      
+          // Create a marker for each alert
+          const alertMarker = new mapboxgl.Marker({ color: 'red' })
+            .setLngLat([longitude, latitude])  // Set the marker's position
+            .addTo(newMap);  // Add the marker to the map
+          
+          const popup = new mapboxgl.Popup({ offset: 25 }).setText(
+            `Count: ${count}`
+          );
+          // Add a click event listener to the marker
+          alertMarker.getElement().addEventListener('click', () => {
+            console.log("\n\n\n CLICKED\n\n\n");
+            alertMarker.setPopup(popup);
+          });
+        });
+      }
+      
     });
 
     setMap(newMap);
 
     return () => newMap.remove();
-  }, [sensorData]);  // Only rerun map setup when sensorData changes
+  }, [sensorData, alerts]);  // Trigger map update when sensorData or alerts change
 
   return <div ref={mapContainerRef} style={{ height: '100vh', width: '100%' }} />;
 };
