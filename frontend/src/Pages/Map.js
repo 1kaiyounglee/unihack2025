@@ -148,14 +148,18 @@ const Map = () => {
           const alertMarker = new mapboxgl.Marker({ color: 'red' })
             .setLngLat([longitude, latitude])  // Set the marker's position
             .addTo(newMap);  // Add the marker to the map
-      
+          
+          const popup = new mapboxgl.Popup({ offset: 25 }).setText(
+            `Count: ${count}`
+          );
           // Add a click event listener to the marker
           alertMarker.getElement().addEventListener('click', 'poeple-density', () => {
             console.log("\n\n\n CLICKED\n\n\n");
-            new mapboxgl.Popup()
-              .setLngLat([longitude, latitude])  
-              .setHTML(`Count: ${count}`)  
-              .addTo(newMap);  
+            alertMarker.setPopup(popup);
+            // new mapboxgl.Popup()
+            //   .setLngLat([longitude, latitude])  
+            //   .setHTML(`Count: ${count}`)  
+            //   .addTo(newMap);  
           });
         });
       }
