@@ -16,8 +16,8 @@ const CreateEventPage = () => {
   });
 
   useEffect(() => {
-    // Using a relative path so that the proxy routes the request to the backend
-    fetch('/api/busyness')
+    // Fetch location details from the new endpoint
+    fetch('/api/locations')
       .then(response => response.json())
       .then(data => {
         console.log('Fetched locations:', data);
@@ -28,26 +28,25 @@ const CreateEventPage = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    // Find the location object from our fetched locations array
+    // Find the selected location object using its value
     const selectedLocation = locations.find(loc => loc.value === formData.location);
-    // Build a new event object (using Date.now() for a temporary id)
+    // Build a new event object
     const newEvent = {
       id: Date.now(),
       name: formData.name,
       date: formData.date,
       time: formData.time,
-      // If we have the full location info, use its label (which includes busyness info)
       location: selectedLocation ? selectedLocation.label : formData.location,
       description: formData.description,
       image: formData.image,
       maxAttendees: formData.maxAttendees,
-      attendees: 0, // default starting count
-      // Extract busyness from the label (assuming the label starts with the busy level)
-      busyness: selectedLocation ? selectedLocation.label.split(' ')[0] : 'Unknown'
+      attendees: 0,
+      peopleCount: selectedLocation ? selectedLocation.peopleCount : 0,
+      busyness: selectedLocation ? selectedLocation.busyness : 'Unknown'
     };
 
-    // Normally, you would send newEvent to the backend here.
-    // Then navigate to the Event List page, passing the new event as router state.
+    // In a real app, you'd send newEvent to the backend to be saved.
+    // Here we navigate to the event list page, passing newEvent via router state.
     navigate('/', { state: { newEvent } });
   };
 

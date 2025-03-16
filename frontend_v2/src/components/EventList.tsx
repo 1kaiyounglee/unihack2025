@@ -6,7 +6,7 @@ const EventList = ({ events: initialEvents = [] }) => {
   const location = useLocation();
   const [events, setEvents] = useState(initialEvents);
 
-  // If a new event is passed in via router state, add it to the events list.
+  // Check if a new event was passed in via router state and add it to our list.
   useEffect(() => {
     if (location.state && location.state.newEvent) {
       setEvents(prevEvents => [...prevEvents, location.state.newEvent]);
@@ -19,7 +19,7 @@ const EventList = ({ events: initialEvents = [] }) => {
         {events.map(event => (
           <Link
             key={event.id}
-            to={`/location/${event.locationId || event.id}`}  // adjust route as needed
+            to={`/location/${event.id}`}
             className="flex-shrink-0 w-72 bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
           >
             <div className="relative h-40">
@@ -27,11 +27,6 @@ const EventList = ({ events: initialEvents = [] }) => {
               <div className="absolute top-2 right-2 px-2 py-1 bg-black bg-opacity-50 rounded text-white text-xs">
                 {event.time}
               </div>
-              {event.trending && (
-                <div className="absolute top-2 left-2 px-2 py-1 bg-purple-600 text-white text-xs rounded-full">
-                  🔥 Trending
-                </div>
-              )}
             </div>
             <div className="p-4">
               <h3 className="font-bold text-lg text-gray-900 mb-1">{event.name}</h3>
@@ -48,9 +43,9 @@ const EventList = ({ events: initialEvents = [] }) => {
                   {event.attendees} attending
                 </span>
               </div>
-              {/* Displaying Busyness Information */}
+              {/* Show people count from sensor data */}
               <div className="mt-2 text-sm text-gray-700">
-                <strong>Busyness:</strong> {event.busyness}
+                <strong>People Count:</strong> {event.peopleCount}
               </div>
             </div>
           </Link>
