@@ -268,3 +268,27 @@ def execute_query_with_returning(query, params=None):
     finally:
         if session:
             session.close()  # Always close the session after the query is done
+
+def insert_alert(df):
+    try:
+        # Assuming the df has the correct column names: latitude, longitude, radius, threshold
+        for index, row in df.iterrows():
+            # Build the SQL insert query
+            query = """
+            INSERT INTO Alerts (latitude, longitude, radius, threshold)
+            VALUES (:latitude, :longitude, :radius, :threshold);
+            """
+            # Values to insert from the DataFrame
+            values = {
+                'latitude': row['latitude'],
+                'longitude': row['longitude'],
+                'radius': row['radius'],
+                'threshold': row['threshold']
+            }
+
+            # Execute the query using the execute_query function
+            execute_query(query, values)
+        
+        print("Data inserted successfully.")
+    except Exception as e:
+        print(f"Error during insert operation: {e}")

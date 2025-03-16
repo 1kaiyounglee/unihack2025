@@ -142,3 +142,23 @@ def update_user():
             return jsonify({"message": f"Failed to update infared table {user_data}"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@api_db.route('/create_alert', methods=['POST'])
+def create_alert():
+    data = request.json
+    try:
+        alert_data = {
+            'latitude'      :data['latitude'],
+            'longitude'     :data['longitude'],
+            'radius'        :data['radius'],
+            'threshold'     :data['threshold'],
+        }
+        df = pd.DataFrame([alert_data])
+        success = db.insert_alert(df)
+        if success:
+            return jsonify({"message": "Infared table updated successfully"}), 200
+        else:
+            return jsonify({"message": f"Failed to update infared table {alert_data}"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

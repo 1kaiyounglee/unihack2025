@@ -73,6 +73,7 @@ def insert_sample_data():
         # Bulk insert all records
         session.add_all(ir)
         session.add_all(events)
+        session.add_all(alerts)
         session.commit()
         print("Sample data inserted into all tables!")
 
