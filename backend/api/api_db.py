@@ -122,6 +122,55 @@ def calculate_event_population():
     except Exception as e:
         print(str(e))
         return jsonify({'error': str(e)}), 500
+    
+
+@api_db.route('fetch_tripped_alerts', methods=['POST'])
+def fetch_tripped_alerts():
+    try:
+        query = """
+        WITH InfraredNearby AS (
+            SELECT i.latitude AS infrared_lat, i.longitude AS infrared_lon, i.count, i.recorded_datetime, 
+                a.latitude AS alert_lat, a.longitude AS alert_lon, a.radius, a.threshold,
+                (6371000 * acos(
+                    cos(radians(a.latitude)) * cos(radians(i.latitude)) * 
+                    cos(radians(i.longitude) - radians(a.longitude)) + 
+                    sin(radians(a.latitude)) * sin(radians(i.latitude))
+                )) AS distance_m
+            FROM Infrared i
+            JOIN Alerts a ON 1=1  -- Cartesian join to compare all alert-infrared pairs
+        ),
+        RankedData AS (
+            SELECT alert_lat, alert_lon, infrared_lat, infrared_lon, count, recorded_datetime, distance_m, radius, threshold,
+                ROW_NUMBER() OVER (
+                    PARTITION BY infrared_lat, infrared_lon 
+                    ORDER BY recorded_datetime DESC
+                ) AS rn
+            FROM InfraredNearby
+            WHERE distance_m <= radius  -- Use alert-specific radius
+        )
+        SELECT a.latitude, a.longitude, COALESCE(SUM(r.count), 0) AS total_count
+        FROM Alerts a
+        LEFT JOIN RankedData r 
+            ON a.latitude = r.alert_lat 
+            AND a.longitude = r.alert_lon
+            AND r.rn = 1  -- Ensure only the most recent sensor reading per lat-lon is used
+        GROUP BY a.latitude, a.longitude, a.threshold
+        HAVING COALESCE(SUM(r.count), 0) >= a.threshold;
+        """
+
+        # Fetch data using db_helper function\
+        df = db.fetch_data(query)
+
+        # Convert DataFrame to JSON response
+        if df is not None and not df.empty:
+            result_data = df.to_dict(orient='records')
+            return jsonify(result_data), 200
+        else:
+            return jsonify({'message': 'No data found'}), 404
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': str(e)}), 500
 
 
 @api_db.route('/update_sensor', methods=['POST'])
@@ -140,5 +189,25 @@ def update_user():
             return jsonify({"message": "Infared table updated successfully"}), 200
         else:
             return jsonify({"message": f"Failed to update infared table {user_data}"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+@api_db.route('/create_alert', methods=['POST'])
+def create_alert():
+    data = request.json
+    try:
+        alert_data = {
+            'latitude'      :data['latitude'],
+            'longitude'     :data['longitude'],
+            'radius'        :data['radius'],
+            'threshold'     :data['threshold'],
+        }
+        df = pd.DataFrame([alert_data])
+        success = db.insert_alert(df)
+        if success:
+            return jsonify({"message": "Infared table updated successfully"}), 200
+        else:
+            return jsonify({"message": f"Failed to update infared table {alert_data}"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
