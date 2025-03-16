@@ -19,7 +19,4 @@ class Infrared(Base):
 
     
     
-    # Relationships
-    # user                    = relationship('Users', back_populates='bookings')
-    # package                 = relationship('Packages', back_populates='bookings')
-    # order_items             = relationship('OrderItems', back_populates='booking')
+    

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Box, IconButton, Typography, TextField, Button, Modal } from '@mui/material';
+import AddLocationAltRoundedIcon from '@mui/icons-material/AddLocationAltRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
@@ -11,6 +13,9 @@ const modalStyle = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 400,
+  maxHeight: '90vh',
+  height: 'auto',
+  overflowY: 'auto',
   bgcolor: '#2e2e2e',
   boxShadow: 24,
   p: 4,
@@ -35,7 +40,7 @@ function AlertsModal({ open, onClose }) {
           onClose();
         }
       }}
-      aria-labelledby="register-modal"
+      aria-labelledby="alerts-modal"
     >
       <Box sx={modalStyle}>
         <IconButton
@@ -78,7 +83,7 @@ function AlertsModal({ open, onClose }) {
                         as={TextField}
                         name="longitude"
                         label="Longitude"
-                        fullWidth
+                        fullWidthS
                         margin="normal"
                         InputLabelProps={{ style: { color: 'white' } }}
                         InputProps={{ style: { color: 'white' } }}
@@ -87,14 +92,15 @@ function AlertsModal({ open, onClose }) {
                     />
                     <IconButton
                         sx={{ position: 'absolute', right: 8, top: 32, color: 'white' }}
-                        >
+                    >
+                         <AddLocationAltRoundedIcon/>   
                     </IconButton>
                 </Box>
                 <Field
                     as={TextField}
                     name="radius"
                     label="Radius"
-                    fullWidth
+                    fullWidthS
                     margin="normal"
                     InputLabelProps={{ style: { color: 'white' } }}
                     InputProps={{ style: { color: 'white' } }}
@@ -105,13 +111,22 @@ function AlertsModal({ open, onClose }) {
                     as={TextField}
                     name="threshold"
                     label="Threshold"
-                    fullWidth
+                    fullWidthS
                     margin="normal"
                     InputLabelProps={{ style: { color: 'white' } }}
                     InputProps={{ style: { color: 'white' } }}
                     error={touched.threshold && Boolean(errors.threshold)}
                     helperText={touched.threshold && errors.threshold}
                 />
+                <IconButton 
+                    type="submit" 
+                    variant="contained" 
+                    fullWidth 
+                    disabled={isSubmitting}
+                    sx = {{ position: 'absolute', bottom: 16, right: 16}}
+                >
+                    <SaveRoundedIcon/>
+                </IconButton>
             </Form>
           )}
         </Formik>

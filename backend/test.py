@@ -26,4 +26,5 @@ query = """
         WHERE r.rn = 1 OR r.rn IS NULL  -- Include events even if no matching data in Infrared
         GROUP BY e.id, e.name, e.latitude, e.longitude;
         """
-print(db.fetch_data(query))
+# print(db.fetch_data(query))
+ut.fetch_and_print_all_tables()
