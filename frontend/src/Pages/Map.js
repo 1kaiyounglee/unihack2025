@@ -153,7 +153,7 @@ const Map = () => {
             `Count: ${count}`
           );
           // Add a click event listener to the marker
-          alertMarker.getElement().addEventListener('click', 'poeple-density', () => {
+          alertMarker.getElement().addEventListener('click', () => {
             console.log("\n\n\n CLICKED\n\n\n");
             alertMarker.setPopup(popup);
             // new mapboxgl.Popup()
