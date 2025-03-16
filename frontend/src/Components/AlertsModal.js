@@ -44,7 +44,6 @@ function AlertsModal({ open, onClose }) {
         <Modal
         open={open}
         onClose={(_, reason) => {
-            // Prevent closing on backdrop click but allow ESC key and close button
             if (reason !== 'backdropClick') {
             onClose();
             }
@@ -54,7 +53,7 @@ function AlertsModal({ open, onClose }) {
         <Box sx={modalStyle}>
             <IconButton
             aria-label="close"
-            onClick={onClose}  // Close modal when cancel button is clicked
+            onClick={onClose}  // Close modal when cancel button
             sx={{ position: 'absolute', right: 8, top: 8, color: 'white' }}
             >
             <CloseRoundedIcon />
@@ -78,11 +77,11 @@ function AlertsModal({ open, onClose }) {
                 validationSchema={validationSchemaRegister}
                 onSubmit={async (values, { setSubmitting, setFieldError, resetForm }) => {
                     setSubmitting(true);
-                    setSuccessMessage(''); // Clear success message
+                    setSuccessMessage('');
 
                     try {
-                    // Call createAlert with formatted values
-                    const success = await createAlert(values);  // Passing the form values directly
+                    // Call createAlert
+                    const success = await createAlert(values);
 
                     // If the alert was successfully created, display success message
                     setSuccessMessage(`Created Alert at Latitude: ${values.latitude}, Longitude: ${values.longitude}`);

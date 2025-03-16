@@ -6,8 +6,8 @@ import { deepPurple } from '@mui/material/colors';
 import Navbar from './Components/Navbar';
 import AlertsModal from './Components/AlertsModal';
 
-// Import your page component
 import Map from './Pages/Map';
+
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',

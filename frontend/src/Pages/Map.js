@@ -14,7 +14,7 @@ const Map = () => {
   // Fetch sensor data
   async function fetchData() {
     const currentDateTime = new Date().toISOString();
-    const sensorReadings = await getSensorData(currentDateTime);  // Get data from your function
+    const sensorReadings = await getSensorData(currentDateTime);
     setSensorData(sensorReadings);  // Set the data to the state
   }
 
@@ -26,7 +26,6 @@ const Map = () => {
   }
 
   useEffect(() => {
-    // Initial data fetch when the component mounts
     fetchData();
     fetchAlerts();
 
@@ -41,7 +40,7 @@ const Map = () => {
   }, []);  // Empty dependency array means this runs once on mount
 
   useEffect(() => {
-    console.log(sensorData);  // This will log the updated sensorData after the state has changed
+    console.log(sensorData); 
   }, [sensorData]);  // This will trigger whenever sensorData changes
 
   useEffect(() => {
@@ -51,7 +50,7 @@ const Map = () => {
     const newMap = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: mapStyle,
-      center: [151.210863, -33.868448], // Center the map on your initial data
+      center: [151.210863, -33.868448], // Center the map
       zoom: 13,
     });
 
@@ -146,9 +145,9 @@ const Map = () => {
       
           // Create a marker for each alert
           const alertMarker = new mapboxgl.Marker({ color: 'red' })
-            .setLngLat([longitude, latitude])  // Set the marker's position
-            .addTo(newMap);  // Add the marker to the map
-          
+            .setLngLat([longitude, latitude])
+            .addTo(newMap);
+            
           const popup = new mapboxgl.Popup({ offset: 25 }).setText(
             `Count: ${count}`
           );
