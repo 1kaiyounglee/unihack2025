@@ -151,6 +151,7 @@ const Map = () => {
       
           // Add a click event listener to the marker
           alertMarker.getElement().addEventListener('click', () => {
+            console.log("\n\n\n CLICKED\n\n\n");
             new mapboxgl.Popup()
               .setLngLat([longitude, latitude])  // Set the popup position to the alert's location
               .setHTML(`
