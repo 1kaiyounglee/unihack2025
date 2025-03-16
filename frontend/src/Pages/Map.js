@@ -156,10 +156,6 @@ const Map = () => {
           alertMarker.getElement().addEventListener('click', () => {
             console.log("\n\n\n CLICKED\n\n\n");
             alertMarker.setPopup(popup);
-            // new mapboxgl.Popup()
-            //   .setLngLat([longitude, latitude])  
-            //   .setHTML(`Count: ${count}`)  
-            //   .addTo(newMap);  
           });
         });
       }
