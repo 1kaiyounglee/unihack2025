@@ -4,9 +4,9 @@ import pandas as pd
 
 
 def fetch_and_print_all_tables():
-    # List of SQL queries for all tables
     queries = {
         "Infrared": "SELECT * FROM Infrared;",
+        
 
     }
     

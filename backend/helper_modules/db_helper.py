@@ -10,11 +10,6 @@ if current_dir not in sys.path:
     sys.path.append(current_dir)
 
 
-
-
-
-# Define the session
-
 def fetch_data(query, params=None):
     """
     Fetches data from the database using a raw SQL query and returns a pandas DataFrame.
@@ -150,51 +145,40 @@ def execute_query(query, params=None):
             session.close()  # Always close the session after the query is done
 
 def make_backup(tablename):
-    # Fetch the data
     df = fetch_data(f"SELECT * FROM {tablename}")
     
     if df is None or df.empty:
         print(f"No data found in table: {tablename}")
         return
     
-    # Get the absolute path to the current file (db_helper.py)
     current_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # Create the full path to the backups folder inside backend/db
     backup_folder = os.path.join(current_dir, "..", "db", "backups")
     
-    # Create the backups folder if it doesn't exist
     if not os.path.exists(backup_folder):
         os.makedirs(backup_folder)
     
-    # Get the current date and time formatted as day-month-year - hour-minute
     current_time = datetime.now().strftime("%d-%m-%Y_%H-%M")
     
-    # Create the backup file path
     backup_file = os.path.join(backup_folder, f"{tablename} backup - {current_time}.json")
     
-    # Convert the DataFrame to JSON and save it to the backup file
     try:
-        df.to_json(backup_file, orient='records', indent=4)  # Save the DataFrame to a JSON file
+        df.to_json(backup_file, orient='records', indent=4)  
         print(f"Backup of {tablename} saved to {backup_file}")
     except Exception as e:
         print(f"Error saving backup: {traceback.format_exc()}")
 
 
 def read_backup(filename):
-    # Get the absolute path to the current file (db_helper.py)
     current_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # Construct the full path to the backups folder inside backend/db
     backup_folder = os.path.join(current_dir, "..", "db", "backups")
     backup_file = os.path.join(backup_folder, filename)
 
-    # Check if the file exists
     if not os.path.exists(backup_file):
         print(f"File {filename} does not exist in backups folder.")
         return None
     
-    # Read the JSON file and convert it to a DataFrame
     try:
         df = pd.read_json(backup_file)
         print(f"Backup {filename} successfully read.")
@@ -215,7 +199,6 @@ def extract_table_name(query):
     Returns:
         str: The extracted table name or None if no table name is found.
     """
-    # Use regex to find the word immediately after 'FROM' or 'from'
     match = re.search(r'FROM\s+([a-zA-Z_][a-zA-Z0-9_]*)', query, re.IGNORECASE)
     if match:
         return match.group(1)
@@ -223,62 +206,16 @@ def extract_table_name(query):
 
 
 
-def execute_query_with_returning(query, params=None):
-    """
-    Executes a given SQL query, commits the transaction, and returns the primary key
-    (or the last inserted row id) of the created row.
-    
-    Args:
-        query (str): The SQL query to execute.
-        params (dict): Optional dictionary of parameters to bind to the query.
-    
-    Returns:
-        int: The primary key of the last inserted row (or None if not applicable).
-    """
-    session = None
-    try:
-        session = Session()  # Get a new database session
 
-        if params:
-            result = session.execute(text(query), params)
-        else:
-            result = session.execute(text(query))
-
-        # Commit the transaction
-        session.commit()
-
-        # For SQLite or databases that support `last_insert_rowid()`
-        last_insert_id_query = "SELECT last_insert_rowid()"
-        result = session.execute(text(last_insert_id_query))
-        row = result.fetchone()  # Store the result of fetchone() in a variable
-        if row:
-            print(row)
-            pk = row[0]  # Access the first element in the tuple, which is the primary key
-            print(f"Primary key (last inserted row id): {pk}")
-            return pk
-        else:
-            print("No row was returned for last_insert_rowid()")
-            return None
-
-    except Exception as e:
-        if session:
-            session.rollback()  # Rollback the transaction in case of error
-        print(f"Error executing query: {traceback.format_exc()}")
-        return None
-    finally:
-        if session:
-            session.close()  # Always close the session after the query is done
 
 def insert_alert(df):
     try:
-        # Assuming the df has the correct column names: latitude, longitude, radius, threshold
+        # build query from alert
         for index, row in df.iterrows():
-            # Build the SQL insert query
             query = """
             INSERT INTO Alerts (latitude, longitude, radius, threshold)
             VALUES (:latitude, :longitude, :radius, :threshold);
             """
-            # Values to insert from the DataFrame
             values = {
                 'latitude': row['latitude'],
                 'longitude': row['longitude'],
@@ -286,7 +223,6 @@ def insert_alert(df):
                 'threshold': row['threshold']
             }
 
-            # Execute the query using the execute_query function
             execute_query(query, values)
         
         print("Data inserted successfully.")
