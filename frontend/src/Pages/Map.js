@@ -141,20 +141,28 @@ const Map = () => {
 
       // Add Alerts to map
       if (alerts.length > 0) {
-        alerts.forEach(alert => {
-          const { latitude, longitude, radius } = alert;
+        alerts.forEach((alert) => {
+          const { latitude, longitude, count } = alert;
+      
+          // Create a marker for each alert
           const alertMarker = new mapboxgl.Marker({ color: 'red' })
-            .setLngLat([longitude, latitude])
-            .addTo(newMap);
-
+            .setLngLat([longitude, latitude])  // Set the marker's position
+            .addTo(newMap);  // Add the marker to the map
+      
+          // Add a click event listener to the marker
           alertMarker.getElement().addEventListener('click', () => {
+            // Create and display a popup when the marker is clicked
             const popup = new mapboxgl.Popup()
-              .setLngLat([longitude, latitude])
-              .setHTML(`<h3>Alert</h3><p>Radius: ${radius} meters</p>`)
-              .addTo(newMap);
+              .setLngLat([longitude, latitude])  // Set the popup position to the alert's location
+              .setHTML(`
+                <h3>Alert</h3>
+                <p>Count: ${count} People</p>
+              `)  // Add the alert's radius as HTML content
+              .addTo(newMap);  // Add the popup to the map
           });
         });
       }
+      
     });
 
     setMap(newMap);
