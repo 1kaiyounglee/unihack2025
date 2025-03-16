@@ -53,7 +53,7 @@ export async function getSensorData(dateTime) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ dateTime }),  // ✅ Pass datetime as part of the request
+      body: JSON.stringify({ dateTime }), 
     });
 
     if (!response.ok) {
@@ -67,7 +67,7 @@ export async function getSensorData(dateTime) {
       return null; 
     }
 
-    // ✅ Transform data into the expected format
+    //Transform data
     const sensorReadings = data.map((reading) => ({
       count         : reading.count,
       latitude      : reading.latitude,

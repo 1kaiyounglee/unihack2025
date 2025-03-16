@@ -12,7 +12,6 @@ api_db = Blueprint('database', __name__)
 @api_db.route('/fetch_query', methods=['POST'])
 def execute_query():
     try:
-        # Get the SQL query from the frontend request
         data = request.json
         query = data.get('query')
 
