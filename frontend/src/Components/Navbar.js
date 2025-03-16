@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Drawer, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, Box, Tooltip, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useNavigate } from 'react-router-dom';
+import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 
-function Navbar() {
+function Navbar({ onAlertsClick }) {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);  // Drawer state
 
@@ -13,31 +15,19 @@ function Navbar() {
 
   return (
     <AppBar position="fixed">
-      <Toolbar sx={{ justifyContent: 'flex-start', paddingRight: 2 }}>
-        {/* Menu Button */}
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          onClick={() => setDrawerOpen(true)}
-          sx={{ mr: 2 }} // Adds margin between icon and text
-        >
-          <MenuIcon />
-        </IconButton>
+      <Toolbar sx={{ justifyContent: 'space-between'}}>
+        <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center'}}>
+          <Typography variant="h6" component="div">
+            Heatmap
+          </Typography>
+          <Tooltip title="Create Alert">
+            <IconButton color="inherit" onClick={onAlertsClick}>
+              <WarningAmberRoundedIcon />
+            </IconButton>
+          </Tooltip>
 
-        {/* Drawer Component */}
-        <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-          <div style={{ width: 250 }}>
-            <Button onClick={() => setDrawerOpen(false)}>Close</Button>
-            <Typography variant="h6">Map Controls</Typography>
-            {/* Add more controls or actions here */}
-          </div>
-        </Drawer>
-
-        {/* Navbar Title */}
-        <Typography variant="h6" component="div">
-          Heatmap
-        </Typography>
+          
+        </Box>
       </Toolbar>
     </AppBar>
   );

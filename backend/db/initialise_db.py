@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Infrared, Event
+from models import Infrared, Event, Alerts
 from db_config import engine, Session
 from datetime import datetime, timedelta
 import random
@@ -66,7 +66,10 @@ def insert_sample_data():
                     count=current_count,
                     recorded_datetime=current_datetime
                 ))
+        alerts = [
+            Alerts(latitude=-33.868300, longitude=151.213454, radius=500, threshold=3000)
 
+        ]
         # Bulk insert all records
         session.add_all(ir)
         session.add_all(events)
