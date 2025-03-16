@@ -82,3 +82,30 @@ export async function getSensorData(dateTime) {
     return null;
   }
 }
+
+export const scanAlerts = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/api/database/fetch_tripped_alerts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.log(`\n\n\nERROR: ${response.status}, ${response.text}\n\n\n`)
+      throw new Error("Network response was not ok:");
+    }
+
+    const data = await response.json();
+    const trippedAlerts = data.map((alert) => ({
+      latitude        : alert.latitude,
+      longitude       : alert.longitude,
+      count           : alert.total_count
+    }));
+    return trippedAlerts;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+};
