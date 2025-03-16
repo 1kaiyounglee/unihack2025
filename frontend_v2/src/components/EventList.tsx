@@ -40,12 +40,8 @@ const EventList = ({ events: initialEvents = [] }) => {
               <div className="flex items-center text-sm">
                 <Users className="h-4 w-4 mr-1 text-purple-600" />
                 <span className="font-medium text-purple-600">
-                  {event.attendees} attending
+                  Live Count: {event.peopleCount}
                 </span>
-              </div>
-              {/* Show people count from sensor data */}
-              <div className="mt-2 text-sm text-gray-700">
-                <strong>People Count:</strong> {event.peopleCount}
               </div>
             </div>
           </Link>
